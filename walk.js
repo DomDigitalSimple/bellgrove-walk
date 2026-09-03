@@ -21,46 +21,60 @@ const COPY = {
     body: "Ensuite through the doorway. 360 on the listing still until the splat draws.",
   },
 };
+
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const HOLD = reduced ? 0 : 1800;
 const FRAME_MS = reduced ? 0 : 280;
+
 let flying = false;
 let flyGen = 0;
 let holdTimer = 0;
 let visitedLiving = false;
-const EXT_FRAMES = [1,2,3,4,5,6,7,8].map((n) => `fly/ext-fly-0${n}.jpg`);
-const KIT_FRAMES = [1,2,3,4,5,6,7,8].map((n) => `fly/kit-orbit-0${n}.jpg`);
+
+const EXT_FRAMES = (window.EXT_FLY_FRAMES && window.EXT_FLY_FRAMES.length)
+  ? window.EXT_FLY_FRAMES
+  : [1,2,3,4,5,6,7,8].map((n) => `fly/ext-fly-0${n}.jpg`);
+const KIT_FRAMES = (window.KIT_FLY_FRAMES && window.KIT_FLY_FRAMES.length)
+  ? window.KIT_FLY_FRAMES
+  : [1,2,3,4,5,6,7,8].map((n) => `fly/kit-orbit-0${n}.jpg`);
 [...EXT_FRAMES, ...KIT_FRAMES].forEach((src) => { const i = new Image(); i.src = src; });
+
 function showRoom(id) {
   for (const [key, el] of Object.entries(rooms)) el.hidden = key !== id;
 }
+
 function markBurger(id) {
   burger.querySelectorAll("[data-jump]").forEach((btn) => {
     btn.setAttribute("aria-current", btn.dataset.jump === id ? "true" : "false");
   });
 }
+
 function setBurger(open) {
   walk.dataset.burger = open ? "open" : "closed";
   burger.hidden = !open;
   burgerBtn.setAttribute("aria-expanded", String(open));
 }
+
 function hudDown() {
   walk.dataset.hud = "down";
   hud.setAttribute("aria-hidden", "true");
   toBed.hidden = true;
   clearTimeout(holdTimer);
 }
+
 function setCopy(room) {
   const c = COPY[room] || COPY.living;
   hudHead.textContent = c.head;
   hudBody.textContent = c.body;
 }
+
 function hudUp(room) {
   setCopy(room);
   walk.dataset.hud = "up";
   hud.setAttribute("aria-hidden", "false");
   toBed.hidden = room !== "living";
 }
+
 function killFly() {
   flyGen += 1;
   flying = false;
@@ -68,6 +82,7 @@ function killFly() {
   document.getElementById("seq-ext").hidden = true;
   document.getElementById("seq-kit").hidden = true;
 }
+
 function playSeq(el, frames) {
   return new Promise((resolve) => {
     if (reduced || !frames.length) { resolve(); return; }
@@ -83,6 +98,7 @@ function playSeq(el, frames) {
     setTimeout(tick, FRAME_MS);
   });
 }
+
 function cutTo(room) {
   killFly();
   setBurger(false);
@@ -104,6 +120,7 @@ function cutTo(room) {
     hudDown();
   }
 }
+
 async function startFly() {
   if (walk.dataset.room !== "exterior" || flying) return;
   const gen = ++flyGen;
@@ -132,6 +149,7 @@ async function startFly() {
   hudDown();
   holdTimer = setTimeout(() => hudUp("living"), HOLD);
 }
+
 async function flyToBedroom() {
   if (flying) return;
   if (walk.dataset.room === "bedroom") return;
@@ -160,6 +178,7 @@ async function flyToBedroom() {
   markBurger("bedroom");
   holdTimer = setTimeout(() => hudUp("bedroom"), 800);
 }
+
 door.addEventListener("click", startFly);
 toBed.addEventListener("click", flyToBedroom);
 burgerBtn.addEventListener("click", () => setBurger(walk.dataset.burger !== "open"));
