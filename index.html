@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bellgrove · 19 Homestead Drive</title>
+  <link rel="stylesheet" href="walk.css" />
+</head>
+<body>
+  <main id="walk" data-room="exterior" data-phase="idle" data-hud="down" data-burger="closed">
+    <div id="stage" aria-live="polite">
+      <section class="room" id="room-exterior">
+        <img class="plate" src="https://cdn.metadigital.co.nz/media/Screenshot%202026-03-31%20at%2012.02.33%E2%80%AFPM.png" alt="Bellgrove showhome from the street, path to the recessed front door" />
+        <button type="button" id="door" aria-label="Enter through the front door">
+          <span class="door-hint">Enter</span>
+        </button>
+      </section>
+      <section class="room" id="room-living" hidden>
+        <img class="plate" src="https://cdn.metadigital.co.nz/media/Screenshot%202026-03-31%20at%2012.03.04%E2%80%AFPM.png" alt="Open-plan living looking toward kitchen island and sliders" />
+      </section>
+      <section class="room" id="room-bedroom" hidden>
+        <img class="plate" src="https://cdn.metadigital.co.nz/media/Screenshot%202026-03-31%20at%201.42.13%E2%80%AFPM.png" alt="Master bedroom" />
+      </section>
+    </div>
+    <aside id="hud" aria-hidden="true">
+      <p class="kicker">Bellgrove</p>
+      <h1 class="headline">Open-plan living</h1>
+      <p class="body">Island, dining, and sliders in one volume. Indoor-outdoor without a wall.</p>
+      <p class="addr">19 Homestead Drive, Rangiora</p>
+    </aside>
+    <p id="disclaimer">From listing photos, not a measured tour.</p>
+    <button type="button" id="burger-btn" aria-label="Jump to a room" aria-expanded="false" aria-controls="burger">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="burger" hidden>
+      <p class="burger-label">Rooms</p>
+      <button type="button" data-jump="exterior">Approach</button>
+      <button type="button" data-jump="living" data-hub="true">Living</button>
+      <button type="button" data-jump="bedroom">Bedroom</button>
+    </nav>
+  </main>
+  <script src="walk.js"></script>
+</body>
+</html>
