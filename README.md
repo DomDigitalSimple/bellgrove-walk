@@ -1,7 +1,6 @@
 # Bellgrove walk
 
-Directed-walk listing PoC for 19 Homestead Drive, Rangiora.
+Live: https://domdigitalsimple.github.io/bellgrove-walk/
 
-Open [the live walk](https://domdigitalsimple.github.io/bellgrove-walk/). Click the recessed front door. Glass burger jumps rooms.
-
+Door = splat dolly into living. Bedroom = kitchen truck then 360 on listing still.
 From listing photos, not a measured tour.
