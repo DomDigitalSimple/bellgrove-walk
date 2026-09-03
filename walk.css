@@ -1,0 +1,238 @@
+:root {
+  --charcoal: #4a4a4a;
+  --bone: #cfc8bc;
+  --foliage: #6b7c5e;
+  --ink: #1a1a1a;
+  --glass: rgba(20, 18, 16, 0.42);
+  --stroke: rgba(207, 200, 188, 0.28);
+  --hold: 2400ms;
+  --fly: 1500ms;
+  --freeze: 320ms;
+  --fade: 480ms;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #walk { height: 100%; }
+body {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", serif;
+  overflow: hidden;
+}
+
+#walk { position: relative; isolation: isolate; }
+#stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0b0b0b;
+}
+.room { position: absolute; inset: 0; }
+#room-exterior { z-index: 2; }
+#room-living { z-index: 1; }
+#room-bedroom { z-index: 1; }
+#walk[data-room="exterior"] #room-exterior { opacity: 1; }
+.plate {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+#room-exterior .plate {
+  transform-origin: 50% 56%;
+  transform: scale(1);
+  transition: none;
+}
+#walk[data-phase="flying"] #room-exterior .plate,
+#walk[data-phase="freeze"] #room-exterior .plate {
+  transform: scale(1.22) translateY(2.4%);
+  transition: transform var(--fly) cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+#walk[data-phase="fade"] #room-exterior {
+  opacity: 0;
+  transition: opacity var(--fade) ease;
+}
+#door {
+  position: absolute;
+  left: 41%;
+  top: 50%;
+  width: 18%;
+  height: 32%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+}
+#door .door-hint {
+  position: absolute;
+  left: 50%;
+  bottom: -1.6rem;
+  transform: translateX(-50%);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--stroke);
+  padding: 0.35rem 0.7rem;
+  opacity: 0;
+  transition: opacity 240ms ease;
+  pointer-events: none;
+}
+#walk[data-room="exterior"][data-phase="idle"] #door:hover .door-hint,
+#walk[data-room="exterior"][data-phase="idle"] #door:focus-visible .door-hint {
+  opacity: 1;
+}
+#walk:not([data-room="exterior"]) #door,
+#walk[data-phase="flying"] #door,
+#walk[data-phase="freeze"] #door,
+#walk[data-phase="fade"] #door { display: none; }
+#hud {
+  position: absolute;
+  left: 4.5vw;
+  bottom: 9vh;
+  max-width: min(36rem, 72vw);
+  padding: 1.4rem 1.6rem 1.25rem;
+  background: var(--glass);
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  color: var(--bone);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  z-index: 4;
+}
+#walk[data-hud="up"] #hud {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+#hud[aria-hidden="true"] { visibility: hidden; }
+#walk[data-hud="up"] #hud { visibility: visible; }
+.kicker {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--foliage);
+  margin-bottom: 0.45rem;
+}
+.headline {
+  font-weight: 500;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #f3eee6;
+}
+.body {
+  margin-top: 0.7rem;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  color: rgba(243, 238, 230, 0.82);
+  max-width: 28rem;
+}
+.addr {
+  margin-top: 0.85rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: rgba(207, 200, 188, 0.7);
+}
+#disclaimer {
+  position: absolute;
+  left: 4.5vw;
+  bottom: 3.2vh;
+  z-index: 4;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: rgba(207, 200, 188, 0.55);
+}
+#burger-btn {
+  position: absolute;
+  top: 3.2vh;
+  right: 3.2vw;
+  z-index: 6;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  gap: 5px;
+}
+#burger-btn span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--bone);
+}
+#walk[data-burger="open"] #burger-btn span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+#walk[data-burger="open"] #burger-btn span:nth-child(2) { opacity: 0; }
+#walk[data-burger="open"] #burger-btn span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+#burger-btn span { transition: transform 180ms ease, opacity 180ms ease; transform: none; opacity: 1; }
+#walk[data-burger="closed"] #burger-btn span { transform: none; opacity: 1; }
+#burger {
+  position: absolute;
+  top: calc(3.2vh + 52px);
+  right: 3.2vw;
+  z-index: 6;
+  min-width: 13.5rem;
+  padding: 0.85rem 0.55rem;
+  background: var(--glass);
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+#burger[hidden] { display: none; }
+.burger-label {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(207, 200, 188, 0.55);
+  padding: 0.2rem 0.75rem 0.55rem;
+}
+#burger button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: var(--bone);
+  font-family: inherit;
+  font-size: 1.15rem;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  border-radius: 2px;
+}
+#burger button[aria-current="true"] {
+  background: rgba(207, 200, 188, 0.12);
+  color: #fff;
+}
+#burger button[data-hub="true"]::after {
+  content: "hub";
+  float: right;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--foliage);
+  margin-top: 0.4rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --fly: 1ms; --freeze: 1ms; --fade: 1ms; --hold: 1ms; }
+  #room-exterior .plate { transition: none !important; }
+  #hud { transition: none !important; }
+}
