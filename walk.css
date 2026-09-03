@@ -21,13 +21,18 @@ body {
 }
 
 #walk { position: relative; isolation: isolate; }
+
 #stage {
   position: absolute;
   inset: 0;
   overflow: hidden;
   background: #0b0b0b;
 }
-.room { position: absolute; inset: 0; }
+
+.room {
+  position: absolute;
+  inset: 0;
+}
 #room-exterior { z-index: 2; }
 #room-living { z-index: 1; }
 #room-bedroom { z-index: 1; }
@@ -41,20 +46,55 @@ body {
   user-select: none;
   pointer-events: none;
 }
-#room-exterior .plate {
-  transform-origin: 50% 56%;
-  transform: scale(1);
-  transition: none;
+
+#room-exterior .plate { transform-origin: 50% 56%; }
+#walk[data-phase="fade"] #room-exterior,
+#walk[data-phase="fade"] #room-living { opacity: 0; transition: opacity var(--fade) ease; }
+#walk[data-room="living"][data-phase="fade"] #room-living { opacity: 1; }
+.seq {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
 }
-#walk[data-phase="flying"] #room-exterior .plate,
-#walk[data-phase="freeze"] #room-exterior .plate {
-  transform: scale(1.22) translateY(2.4%);
-  transition: transform var(--fly) cubic-bezier(0.22, 0.61, 0.36, 1);
+.orbit { position: absolute; inset: 0; overflow: hidden; }
+.orbit .spin {
+  width: 118%;
+  height: 118%;
+  margin: -9%;
+  object-fit: cover;
+  animation: orbit360 14s ease-in-out 1 forwards;
 }
-#walk[data-phase="fade"] #room-exterior {
-  opacity: 0;
-  transition: opacity var(--fade) ease;
+@keyframes orbit360 {
+  0% { transform: translate(0,0) scale(1) rotate(0deg); }
+  35% { transform: translate(-6%, 2%) scale(1.08) rotate(-4deg); }
+  70% { transform: translate(5%, -1%) scale(1.12) rotate(5deg); }
+  100% { transform: translate(0,0) scale(1.06) rotate(0deg); }
 }
+@media (prefers-reduced-motion: reduce) {
+  .orbit .spin { animation: none; }
+}
+#to-bedroom {
+  position: absolute;
+  right: 4.5vw;
+  bottom: 11vh;
+  z-index: 5;
+  border: 1px solid var(--stroke);
+  background: var(--glass);
+  color: var(--bone);
+  backdrop-filter: blur(16px);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+}
+#walk[data-hud="up"][data-room="living"] #to-bedroom { display: block; }
+#to-bedroom[hidden] { display: none !important; }
+
 #door {
   position: absolute;
   left: 41%;
@@ -93,6 +133,7 @@ body {
 #walk[data-phase="flying"] #door,
 #walk[data-phase="freeze"] #door,
 #walk[data-phase="fade"] #door { display: none; }
+
 #hud {
   position: absolute;
   left: 4.5vw;
@@ -116,6 +157,7 @@ body {
 }
 #hud[aria-hidden="true"] { visibility: hidden; }
 #walk[data-hud="up"] #hud { visibility: visible; }
+
 .kicker {
   font-family: ui-sans-serif, system-ui, sans-serif;
   font-size: 0.72rem;
@@ -145,6 +187,7 @@ body {
   letter-spacing: 0.08em;
   color: rgba(207, 200, 188, 0.7);
 }
+
 #disclaimer {
   position: absolute;
   left: 4.5vw;
@@ -155,6 +198,7 @@ body {
   letter-spacing: 0.04em;
   color: rgba(207, 200, 188, 0.55);
 }
+
 #burger-btn {
   position: absolute;
   top: 3.2vh;
@@ -183,6 +227,7 @@ body {
 #walk[data-burger="open"] #burger-btn span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 #burger-btn span { transition: transform 180ms ease, opacity 180ms ease; transform: none; opacity: 1; }
 #walk[data-burger="closed"] #burger-btn span { transform: none; opacity: 1; }
+
 #burger {
   position: absolute;
   top: calc(3.2vh + 52px);
@@ -231,6 +276,7 @@ body {
   color: var(--foliage);
   margin-top: 0.4rem;
 }
+
 @media (prefers-reduced-motion: reduce) {
   :root { --fly: 1ms; --freeze: 1ms; --fade: 1ms; --hold: 1ms; }
   #room-exterior .plate { transition: none !important; }
