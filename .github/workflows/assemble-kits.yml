@@ -1,0 +1,41 @@
+name: Assemble kit fly-pack
+on:
+  push:
+    paths:
+      - "fly-pack/_parts/**"
+      - ".github/workflows/assemble-kits.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble kit-1..kit-8
+        run: |
+          set -euo pipefail
+          mkdir -p fly-pack
+          for i in 1 2 3 4 5 6 7 8; do
+            parts=(fly-pack/_parts/kit-$i.*.txt)
+            if [ ! -e "${parts[0]}" ]; then
+              echo "missing parts for kit-$i"
+              exit 1
+            fi
+            # sort numerically by chunk index
+            ls fly-pack/_parts/kit-$i.*.txt | sort -t. -k2 -n | xargs cat > "fly-pack/kit-$i.js"
+            echo -n "kit-$i.js "; wc -c < "fly-pack/kit-$i.js"; sha256sum "fly-pack/kit-$i.js"
+          done
+      - name: Commit assembled kits
+        run: |
+          set -euo pipefail
+          git config user.name "Dom England - DS"
+          git config user.email "dom@digitalsimple.co.nz"
+          git add fly-pack/kit-1.js fly-pack/kit-2.js fly-pack/kit-3.js fly-pack/kit-4.js \
+                  fly-pack/kit-5.js fly-pack/kit-6.js fly-pack/kit-7.js fly-pack/kit-8.js
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Assemble fly-pack/kit-1.js through kit-8.js from parts"
+          git push
